@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StreamVault — Sign In, Register & Contact Us</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-between font-sans">
+
+<!-- Top Navigation Bar -->
+<header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex flex-wrap justify-between items-center gap-4">
+        <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-cyan-500 flex items-center justify-center shadow-lg shadow-indigo-500/30">
+                <i class="fa-solid fa-cloud-arrow-down text-white text-xl"></i>
+            </div>
+            <div>
+                <span class="text-xl font-extrabold tracking-tight text-white">StreamVault</span>
+                <span class="block text-xs text-cyan-400">Universal Social Video Downloader</span>
+            </div>
+        </div>
+
+        <!-- Real-Time Navigation Tabs -->
+        <nav class="flex items-center space-x-2 bg-slate-800/90 p-1.5 rounded-xl border border-slate-700">
+            <button onclick="switchTab('login')" id="tabBtn-login"
+                    class="px-4 py-2 rounded-lg text-sm font-semibold transition">
+                <i class="fa-solid fa-right-to-bracket mr-1.5"></i>Sign In
+            </button>
+            <button onclick="switchTab('register')" id="tabBtn-register"
+                    class="px-4 py-2 rounded-lg text-sm font-semibold transition">
+                <i class="fa-solid fa-user-plus mr-1.5"></i>New User Registration
+            </button>
+            <button onclick="switchTab('features')" id="tabBtn-features"
+                    class="px-4 py-2 rounded-lg text-sm font-semibold transition">
+                <i class="fa-solid fa-bolt mr-1.5"></i>Home Page Features
+            </button>
+            <button onclick="switchTab('contact')" id="tabBtn-contact"
+                    class="px-4 py-2 rounded-lg text-sm font-semibold transition">
+                <i class="fa-solid fa-envelope mr-1.5"></i>Contact Us
+            </button>
+        </nav>
+    </div>
+</header>
+
+<!-- Main Portal Section -->
+<main class="max-w-6xl w-full mx-auto px-6 py-12 flex-grow flex items-center justify-center">
+    <div class="w-full">
+
+        <!-- Alert Notifications -->
+        <div th:if="${errorMsg}" class="max-w-lg mx-auto mb-6 p-4 rounded-xl bg-red-500/15 border border-red-500/40 text-red-300 flex items-center gap-3">
+            <i class="fa-solid fa-circle-exclamation text-red-400 text-lg"></i>
+            <span th:text="${errorMsg}"></span>
+        </div>
+        <div th:if="${successMsg}" class="max-w-lg mx-auto mb-6 p-4 rounded-xl bg-emerald-500/15 border border-emerald-500/40 text-emerald-300 flex items-center gap-3">
+            <i class="fa-solid fa-circle-check text-emerald-400 text-lg"></i>
+            <span th:text="${successMsg}"></span>
+        </div>
+
+        <!-- 1. SIGN IN TAB -->
+        <section id="panel-login" class="max-w-md mx-auto bg-slate-900 border border-slate-800 rounded-2xl p-8 shadow-2xl">
+            <div class="text-center mb-6">
+                <h1 class="text-2xl font-bold text-white">Welcome Back</h1>
+                <p class="text-slate-400 text-sm mt-1">Sign in with your Username or Email and Password</p>
+            </div>
+            <form th:action="@{/auth/login}" method="post" class="space-y-5">
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Username or Email ID</label>
+                    <div class="relative">
+                        <i class="fa-solid fa-user absolute left-4 top-3.5 text-slate-500"></i>
+                        <input type="text" name="loginId" required placeholder="Enter username or email"
+                               class="w-full pl-11 pr-4 py-3 bg-slate-950 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-indigo-500">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Password</label>
+                    <div class="relative">
+                        <i class="fa-solid fa-lock absolute left-4 top-3.5 text-slate-500"></i>
+                        <input type="password" name="password" required placeholder="Enter your password"
+                               class="w-full pl-11 pr-4 py-3 bg-slate-950 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-indigo-500">
+                    </div>
+                </div>
+                <button type="submit"
+                        class="w-full py-3.5 rounded-xl bg-gradient-to-r from-indigo-600 to-cyan-500 hover:from-indigo-500 hover:to-cyan-400 text-white font-bold shadow-lg shadow-indigo-600/30 transition">
+                    Sign In to Downloader
+                </button>
+            </form>
+            <p class="text-center text-sm text-slate-400 mt-6">
+                New to StreamVault?
+                <button onclick="switchTab('register')" class="text-cyan-400 hover:underline font-semibold">Create an Account</button>
+            </p>
+        </section>
+
+        <!-- 2. NEW USER REGISTRATION TAB -->
+        <section id="panel-register" class="hidden max-w-lg mx-auto bg-slate-900 border border-slate-800 rounded-2xl p-8 shadow-2xl">
+            <div class="text-center mb-6">
+                <h2 class="text-2xl font-bold text-white">Create Your Account</h2>
+                <p class="text-slate-400 text-sm mt-1">All credentials are encrypted and stored in SQL Server</p>
+            </div>
+            <form th:action="@{/auth/register}" method="post" class="space-y-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Username</label>
+                        <input type="text" name="username" required placeholder="e.g. abdulmunib"
+                               class="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-indigo-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Email Address</label>
+                        <input type="email" name="email" required placeholder="you@example.com"
+                               class="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-indigo-500">
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Birthdate</label>
+                        <input type="date" name="birthdate" required
+                               class="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-indigo-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Phone Number</label>
+                        <input type="tel" name="phoneNumber" required placeholder="+92 300 1234567"
+                               class="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-indigo-500">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Password</label>
+                    <input type="password" name="password" required minlength="6" placeholder="Create a strong password"
+                           class="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-indigo-500">
+                </div>
+                <button type="submit"
+                        class="w-full py-3.5 mt-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 text-white font-bold shadow-lg shadow-emerald-600/30 transition">
+                    Complete Registration
+                </button>
+            </form>
+        </section>
+
+        <!-- 3. HOME PAGE FEATURES SHOWCASE TAB -->
+        <section id="panel-features" class="hidden max-w-5xl mx-auto">
+            <div class="text-center mb-10">
+                <span class="px-3.5 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+                    Platform Capabilities
+                </span>
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-white mt-4">All-In-One Universal Video Downloader</h2>
+                <p class="text-slate-400 max-w-2xl mx-auto mt-2">
+                    Modeled after GetInDevice with real-time stream inspection, multi-resolution selection, and instant browser downloading.
+                </p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl">
+                    <div class="w-12 h-12 rounded-xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center text-xl mb-4">
+                        <i class="fa-solid fa-globe"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-white">1000+ Supported Platforms</h3>
+                    <p class="text-sm text-slate-400 mt-2">
+                        Download public videos from Tumblr, YouTube, TikTok, Instagram, Facebook, X (Twitter), Vimeo, Dailymotion, and Pinterest.
+                    </p>
+                </div>
+                <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl">
+                    <div class="w-12 h-12 rounded-xl bg-cyan-500/20 text-cyan-400 flex items-center justify-center text-xl mb-4">
+                        <i class="fa-solid fa-sliders"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-white">Multi-Format & Quality Picker</h3>
+                    <p class="text-sm text-slate-400 mt-2">
+                        Paste any link to view real-time options including Full HD MP4, 720p, 480p SD, or MP3/M4A audio-only tracks.
+                    </p>
+                </div>
+                <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl">
+                    <div class="w-12 h-12 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-xl mb-4">
+                        <i class="fa-solid fa-download"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-white">Instant Downloads Folder Save</h3>
+                    <p class="text-sm text-slate-400 mt-2">
+                        Streams the chosen video directly through your browser into your local Downloads folder with zero third-party redirects.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. CONTACT US TAB -->
+        <section id="panel-contact" class="hidden max-w-lg mx-auto bg-slate-900 border border-slate-800 rounded-2xl p-8 shadow-2xl">
+            <div class="text-center mb-6">
+                <h2 class="text-2xl font-bold text-white">Contact Us</h2>
+                <p class="text-slate-400 text-sm mt-1">Have questions, feedback, or need support? Send us a direct message.</p>
+            </div>
+            <form th:action="@{/auth/contact}" method="post" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Your Name</label>
+                    <input type="text" name="fullName" required placeholder="Enter your full name"
+                           class="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-indigo-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Email Address</label>
+                    <input type="email" name="email" required placeholder="you@example.com"
+                           class="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-indigo-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Subject</label>
+                    <input type="text" name="subject" required placeholder="How can we help?"
+                           class="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-indigo-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Message</label>
+                    <textarea name="message" rows="4" required placeholder="Write your message here..."
+                              class="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-indigo-500"></textarea>
+                </div>
+                <button type="submit"
+                        class="w-full py-3.5 rounded-xl bg-gradient-to-r from-indigo-600 to-cyan-500 hover:from-indigo-500 hover:to-cyan-400 text-white font-bold shadow-lg transition">
+                    <i class="fa-solid fa-paper-plane mr-2"></i>Send Message
+                </button>
+            </form>
+        </section>
+
+    </div>
+</main>
+
+<footer class="border-t border-slate-800 py-6 text-center text-xs text-slate-500">
+    &copy; 2026 StreamVault Universal Video Downloader. Built with Spring Boot &amp; Microsoft SQL Server.
+</footer>
+
+<script th:inline="javascript">
+    const initialTab = /*[[${activeTab}]]*/ 'login';
+    const tabs = ['login', 'register', 'features', 'contact'];
+
+    function switchTab(selected) {
+        tabs.forEach(t => {
+            const panel = document.getElementById('panel-' + t);
+            const btn = document.getElementById('tabBtn-' + t);
+            if (t === selected) {
+                panel.classList.remove('hidden');
+                btn.className = 'px-4 py-2 rounded-lg text-sm font-semibold transition bg-indigo-600 text-white shadow';
+            } else {
+                panel.classList.add('hidden');
+                btn.className = 'px-4 py-2 rounded-lg text-sm font-semibold transition text-slate-300 hover:text-white';
+            }
+        });
+    }
+
+    switchTab(initialTab);
+</script>
+</body>
+</html>
